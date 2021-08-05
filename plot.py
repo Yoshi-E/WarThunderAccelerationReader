@@ -20,7 +20,7 @@ SMOOTHING = True
 # Will "fix" the RPM, Gear, and SPD, at the last given value if they are unchanged for over FIX_TRESH frames
 # Usefull if you just want to compare acceleration
 # To disable set to 99999
-FIX_TRESH = 99999
+FIX_TRESH = 100
 
 SAVE_FIXED_CSV = True
 
