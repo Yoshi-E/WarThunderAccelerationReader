@@ -17,6 +17,7 @@ VIDEOFILE = 'videos/test2.mp4'
 
 # Configure the region selection for the given snipets.
 # Best practise is to determin the position of the elemtents from a screenshot of the desired resolution.
+# Format: (x,y,w,h)
 if VIDEO == "1080p":
     HASHFOLDER = "hashes_1080p"
     GEAR = (67, 1004, 35, 22)
