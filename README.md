@@ -47,6 +47,7 @@ Hoverever I do recommend to generate everything yourself.
    * The first datapoint in the .csv file is the frame before the first gear change is detected. (First instance of gear not being in neutral, "N").
    For exmample if in the orignal video the Vehicle is in "N" at frame 1000, and "Gear 1" at Frame 1001, the first row in the .csv would be frame 1000. 
    * Each data row represents one frame of the video.
+7. Every time you run a new video, you have to check for new unsorted images in the hashes folder. Otherwise it can cause incorrect readings.
 
 # How to use the plotter:
 1. Configure the variables in `plot.py` to your needs
