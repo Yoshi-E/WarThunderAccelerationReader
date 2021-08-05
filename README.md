@@ -54,5 +54,6 @@ The .csv files were recored at 2k, on RB custom battles, on the big runway to th
 # How to use the plotter:
 1. Configure the variables in `plot.py` to your needs
 2. Run `plot.py` to generate a plot with all .cvs files
+3. This script will also generate a "fixed_csv" version, where it removes incorrect reads to the best of its ability.
 The result should look something like this:
 ![Setup](/examples/Figure_1_smoothed.png?raw=true)
