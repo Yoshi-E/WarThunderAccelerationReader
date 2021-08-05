@@ -25,6 +25,8 @@ The tools are configured with constants inside the files.
 In the example folder you will find example .csv files and example hash databases for different resolutions.
 Hoverever I do recommend to generate everything yourself.
 
+The .csv files were recored at 2k, on RB custom battles, on the big runway to the west on the map cargo port.
+
 # How to use the detector
 1. After downloading you first have to configure `detect.py`
    *  Set the constant `VIDEO` to match the video resoltion (Currently only 1080p and 2k is supported)
