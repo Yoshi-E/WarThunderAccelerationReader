@@ -37,7 +37,7 @@ The .csv files were recored at 2k, on RB custom battles, on the big runway to th
    *  This is because it has not found any hash database yet
 3. After running it, `detect.py` should have created a "hashes" folder with multiple sub folder, and should have populated it with many small images
    * ![Setup](/examples/setup1.png?raw=true)
-   * Should the number of images exceed 500, I would recommend to increase the `TRESH`
+   * Should the number of images exceed 500, I would recommend to delete them all and try again with an increased `TRESH` value
 4. Now you have to sort each image to the respective folder like this:
    * ![Setup](/examples/setup2.png?raw=true)
    * All images that do not clearly show the numbers 0-9 or the letter "N" should be placed in the "err" folder
