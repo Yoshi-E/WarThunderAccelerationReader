@@ -15,12 +15,12 @@ from datatools import fixGear, fixRPM, fixSPD, resetHistory
 FRAME_LIMIT = 5000 
 
 # Applies the savgol filter if True
-SMOOTHING = True
+SMOOTHING = False
 
 # Will "fix" the RPM, Gear, and SPD, at the last given value if they are unchanged for over FIX_TRESH frames
 # Usefull if you just want to compare acceleration
 # To disable set to 99999
-FIX_TRESH = 100
+FIX_TRESH = 60*5  #lock after 5 seconds
 
 SAVE_FIXED_CSV = True
 

@@ -57,10 +57,11 @@ else: #1080p
 
 # HASH_SIZE: Bit size of the image hash. 
 # Larger HASH_SIZE increses computation complexity, but also make the algorithm more sensetive to difference between images.
+# It is recommended not to change this value
 HASH_SIZE = 8 
 
 
-
+# Debugging
 # Will display each cropped image (test if the crops are set correctly)
 DEBUG = False
 
@@ -267,7 +268,8 @@ if __name__ == "__main__":
                 try:
                     spamwriter.writerow(previous_row)
                 except Exception as e:
-                    pass
+                    spamwriter.writerow([0,0,0]) #writes empty data on error
+                    print(e)
             previous_row = [gear, rpm, spd]
             success,frame = vidcap.read()
             frame_i += 1
