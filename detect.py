@@ -10,10 +10,10 @@ import sys
 import random
 
 # Quickly select the selected resolution:
-VIDEO = "1080p"
+VIDEO = "2k native"
 
 # Location of the VIDEO file
-VIDEOFILE = 'videos/test2.mp4'
+VIDEOFILE = 'videos/Leopard 2A6 No Modules.mp4'
 
 # Configure the region selection for the given snipets.
 # Best practise is to determin the position of the elemtents from a screenshot of the desired resolution.
@@ -46,15 +46,18 @@ if "2k" in VIDEO: #2k res
     # HASH Diffrence Theshhold 
     # Lower Number: More sensetive --> More hash images need to be stored
     # Higher Number: Less sensetive, but it will be possible for numbers to be mistake for one another
-    TRESH = 10  
+    TRESH = 10
 else: #1080p
     DIGITS = [(1, 2, 11, 15),
             (11, 2, 11, 15),
             (20, 2, 11, 15),
             (30, 2, 11, 15)]
-    TRESH = 8 # As the sections are smaller, we also need to reduce the error tolerance  
+    TRESH = 10 # As the sections are smaller, we also need to reduce the error tolerance  
 
+LIMIT = 1500
 
+# Enable for Missile carriers whos speed is shown with red numbers:
+MASK_RED = False 
 # HASH_SIZE: Bit size of the image hash. 
 # Larger HASH_SIZE increses computation complexity, but also make the algorithm more sensetive to difference between images.
 # It is recommended not to change this value
@@ -90,8 +93,11 @@ def pre_process_img(img):
         tresh = 20
 
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    gray, img_bin = cv2.threshold(gray,128,255,cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    T, img_bin = cv2.threshold(gray,128,255,cv2.THRESH_BINARY) # | cv2.THRESH_OTSU
+
+    #T, img_bin = cv2.threshold(img_bin,195,0,cv2.THRESH_BINARY) # | cv2.THRESH_OTSU
     gray = cv2.bitwise_not(img_bin)
+
 
     kernel = np.ones((2, 1), np.uint8)
     img = cv2.erode(gray, kernel, iterations=1)
@@ -170,6 +176,13 @@ def loadHashmap():
         hash = os.path.basename(os.path.splitext(file)[0])
         hashMap[hash] = (folder, rawhash)
 
+    for file in glob(HASHFOLDER+"/*.png"):
+        img = Image.open(file)
+        rawhash = imagehash.phash(img, hash_size=HASH_SIZE)
+
+        hash = os.path.basename(os.path.splitext(file)[0])
+        hashMap[hash] = (None, rawhash)
+
 # Tries to read the value of an input image and returns it.
 # Should it fail to find a match within the tresh value, it will return None, and save it to the HASHFOLDER
 # Returns either None or String
@@ -246,6 +259,11 @@ if __name__ == "__main__":
 
         # As long as we have a valid video frame, attempt to read the numbers and write it to a csv file.
         while success: 
+            # if frame_i < 254:
+            #     frame_i+=1
+            #     success,frame = vidcap.read()
+            #     continue
+
             snip = crop(frame, *GEAR)
             gimg = pre_process_img(snip)
             gear = getValDigits(gimg, "gear", tresh=TRESH)
@@ -255,7 +273,8 @@ if __name__ == "__main__":
             rpm = getValDigits(rimg, "rpm", tresh=TRESH)
 
             snip = crop(frame, *SPD)
-            snip = maskRed(snip) # handels "red numbers" for the speed indicator
+            if MASK_RED:
+                snip = maskRed(snip) # handels "red numbers" for the speed indicator
             simg = pre_process_img(snip)
             spd = getValDigits(simg, "spd", tresh=TRESH)
 
@@ -273,5 +292,7 @@ if __name__ == "__main__":
             previous_row = [gear, rpm, spd]
             success,frame = vidcap.read()
             frame_i += 1
+            if frame_i > LIMIT:
+                success = False
     # cv2.imshow("Input", frame)
     # cv2.waitKey(0)

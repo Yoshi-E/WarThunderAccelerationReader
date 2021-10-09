@@ -12,7 +12,7 @@ import sys
 from datatools import fixGear, fixRPM, fixSPD, resetHistory
 
 # Will only generate data for the first FRAME_LIMIT frames
-FRAME_LIMIT = 5000 
+FRAME_LIMIT = 1500 
 
 # Applies the savgol filter if True
 SMOOTHING = False
@@ -21,7 +21,7 @@ SMOOTHING = False
 # Usefull if you just want to compare acceleration
 # To disable set to 99999
 FIX_TRESH = 60*5  #lock after 5 seconds
-
+FPS = 60
 SAVE_FIXED_CSV = True
 
 FIXED_FOLDER = "csv_fixed"
@@ -57,17 +57,17 @@ for file in glob("csv/*.csv"):
                         print(fix)
                     # Will fixate all following data points to be the same value (so deacceleration values are not displayed / used)
                     if fix:
-                        data.append(fix)
+                        data.append([i / FPS] + fix)
                     else:
                         history[i % FIX_TRESH] = crow
-                        data.append(crow)
+                        data.append([i / FPS] + crow)
                 except Exception as e:
                     print("Err in line '{}': {} {}".format(i, row, e))
     if not fix:
         fix = crow
     if i < FRAME_LIMIT:
         for ii in range(i, FRAME_LIMIT):
-            data.append(fix)
+            data.append([ii / FPS] + fix)
 
     # Precoress and transform the data for the plot
     data = np.array(data[:FRAME_LIMIT])
@@ -84,6 +84,7 @@ for file in glob("csv/*.csv"):
         pdata.append(data[:, 0])
         pdata.append(data[:, 1])
         pdata.append(data[:, 2])
+        pdata.append(data[:, 3])
     except Exception as e:
         print(data)
         print(e)
@@ -91,25 +92,25 @@ for file in glob("csv/*.csv"):
     # For better visual looks we can use the savgol filter
     if SMOOTHING:
         for i, val in enumerate(pdata):
-            pdata[i] = scipy.signal.savgol_filter(pdata[i], 51, 3)
+            if i > 0:
+                pdata[i] = scipy.signal.savgol_filter(pdata[i], 51, 3)
 
     # Plot the data
 
-    axs[0].plot(pdata[0], label = name)
+    axs[0].plot(pdata[0], pdata[1], label = name)
     #axs[0].set_title('Gear')
-    axs[0].set(xlabel='Frame', ylabel='Gear')
+    axs[0].set(xlabel='Time (seconds)', ylabel='Gear')
     axs[0].grid(color='0.95')
     axs[0].legend(title='Vehicles', bbox_to_anchor=(1.01, 1), loc='upper left', prop=fontP)
 
-    axs[1].plot(pdata[1], label = name)
+    axs[1].plot(pdata[0], pdata[2], label = name)
     #axs[1].set_title('RPM')
-    axs[1].set(xlabel='Frame', ylabel='RPM')
+    axs[1].set(xlabel='Time (seconds)', ylabel='RPM')
     axs[1].grid(color='0.95')
 
-    axs[2].plot(pdata[2], label = name)
+    axs[2].plot(pdata[0], pdata[3], label = name)
     #axs[2].set_title('SPD')
-    axs[2].set(xlabel='Frame', ylabel='Speed (km/h)')
+    axs[2].set(xlabel='Time (seconds)', ylabel='Speed (km/h)')
     axs[2].grid(color='0.95')
-
 
 plt.show()
